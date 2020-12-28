@@ -1,0 +1,39 @@
+#!/usr/bin/env python
+
+import numpy as n
+import digital_rf as drf
+import matplotlib.pyplot as plt
+import scipy.signal as ss
+n_pulse=100
+dec=250
+vec_len=25000000
+
+idx0=50000
+idx1=53000
+vec_len2=(idx1-idx0)*dec
+idx=n.arange(vec_len2,dtype=n.float64)
+f0=2.5e6
+down_convert=n.exp(-1j*2.0*n.pi*f0*idx/25e6)
+
+S=n.zeros([n_pulse,idx1-idx0])
+while True:
+    d=drf.DigitalRFReader("/dev/shm/hf25")
+    b=d.get_bounds("cha")
+    t0=n.ceil(b[0])/25000000+1
+    t1=n.floor(b[1])/25000000
+    for i in range(n_pulse):
+        z=d.read_vector_c81d(t0*25000000-vec_len/2+i*25000000+idx0*dec,vec_len2,"cha")
+        zd=ss.decimate(z*down_convert,dec,ftype="fir")
+        zd=zd-n.median(zd)
+        S[i,:]=n.abs(zd)**2.0
+    plt.plot(zd.real)
+    plt.plot(zd.imag)
+    plt.show()
+#    plt.specgram(zd,NFFT=512,Fs=25e6/dec,Fc=f0)
+    plt.pcolormesh(10.0*n.log10(S))
+    plt.colorbar()
+    plt.show()
+        
+
+    
+    

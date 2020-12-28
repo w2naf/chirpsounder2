@@ -47,7 +47,7 @@ def main():
 
     start_sample=int(t0)*sample_rate_i
 
-    drf_out = drf.DigitalRFWriter("/mnt/ramdisk/hf1/cha",
+    drf_out = drf.DigitalRFWriter("/dev/shm/hf1/cha",
                                   cpu_dtype,
                                   3600,
                                   1000,

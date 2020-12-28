@@ -153,13 +153,13 @@ int UHD_SAFE_MAIN(int argc, char* argv[])
     global_start_index = (uint64_t)((uint64_t)tstart * (long double)sample_rate_numerator/sample_rate_denominator);
     printf("%lld\n",global_start_index);
 
-    printf("Writing complex short to multiple files and subdirectores in /dev/shm/hf25/cha\n");
+    printf("Writing complex short to multiple files and subdirectores in /mnt/ramdisk/hf25/cha\n");
 
-    result = system("mkdir -p /dev/shm/hf25/cha");
-    result = system("rm -Rf /dev/shm/hf25/cha/2*/tmp*.h5");
+    result = system("mkdir -p /mnt/ramdisk/hf25/cha");
+    result = system("rm -Rf /mnt/ramdisk/hf25/cha/2*/tmp*.h5");
 
     /* init */
-    data_object = digital_rf_create_write_hdf5("/dev/shm/hf25/cha",
+    data_object = digital_rf_create_write_hdf5("/mnt/ramdisk/hf25/cha",
 					       H5T_NATIVE_SHORT,
 					       subdir_cadence,
 					       millseconds_per_file,
