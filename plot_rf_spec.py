@@ -9,10 +9,11 @@ import sys
 import chirp_config as cc
 import scipy.signal as ss
 import chirp_det as cd
+import chirp_det as c
 
 if __name__ == "__main__":
     n_spec=100
-    n_avg=10
+    n_avg=32
     n_fft=4096
     if len(sys.argv) == 2:
         conf=cc.chirp_config(sys.argv[1])
@@ -48,7 +49,7 @@ if __name__ == "__main__":
     plt.pcolormesh(tvec,fvec,dB,vmin=-10,vmax=50.0,cmap="plasma")
     plt.colorbar()
     plt.title("$V_{\mathrm{RMS}}=%1.6f$ (ADC units)"%(rms_voltage))
-    plt.xlabel("Time (s)")
+    plt.xlabel("Time (seconds since %s)"%(c.unix2datestr(i0/conf.sample_rate)))
     plt.ylabel("Frequency (MHz)")
     plt.ylim([(-conf.sample_rate/2.0/1e6+conf.center_freq/1e6),(conf.sample_rate/2.0/1e6+conf.center_freq/1e6)])
     plt.show()
