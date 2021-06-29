@@ -14,7 +14,7 @@ import chirp_det as c
 if __name__ == "__main__":
     n_spec=100
     n_avg=32
-    n_fft=4096
+    n_fft=2048
     if len(sys.argv) == 2:
         conf=cc.chirp_config(sys.argv[1])
     else:

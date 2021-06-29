@@ -3,8 +3,8 @@
 # analyze unknown ionograms serendipitously (start analyzing when a new chirp is detected)
 #
 # try to fix possible overheating problem by restricting the cpu clock frequency
-echo 70 | sudo tee /sys/devices/system/cpu/intel_pstate/max_perf_pct
-echo 70 | sudo tee /sys/devices/system/cpu/intel_pstate/min_perf_pct
+#echo 70 | sudo tee /sys/devices/system/cpu/intel_pstate/max_perf_pct
+#echo 70 | sudo tee /sys/devices/system/cpu/intel_pstate/min_perf_pct
 
 #
 # make sure this is the right mpirun command (you might need mpirun instead of mpirun.mpich)
@@ -19,13 +19,14 @@ CONF_FILE=juha.ini
 # make this about 200 MB less than half your RAM size
 # with an SSD this can be more
 # more is better, as we can analyze more
-RINGBUFFER_SIZE=42000MB
+RINGBUFFER_SIZE=90000MB
+#RINGBUFFER_SIZE=-10GB # Make ringbuffer up to the disk size minus 10 GB.
 # start a ringbuffer
 #
 
 rm -Rf $RINGBUFFER_DIR
-#thor.py -m 192.168.10.2 -d A:A -c cha -f $CENTER_FREQ -r $SAMPLE_RATE $RINGBUFFER_DIR &
-sh thor_kludge.sh > thor.log 2>&1 &
+thor.py -m 192.168.10.2 -d A:A -c cha -f $CENTER_FREQ -r $SAMPLE_RATE $RINGBUFFER_DIR > thor.log 2>&1 &
+#sh thor_kludge.sh > thor.log 2>&1 &
 sleep 10
 
 drf ringbuffer -z $RINGBUFFER_SIZE $RINGBUFFER_DIR -p 2 > ringbuffer.log 2>&1 &
@@ -43,7 +44,7 @@ sleep 10
 # calculate ionograms
 # seems like four parallel processes work.
 # this means we can process four ionograms simultaneously!
-$MPIRUN -np 4 python calc_ionograms.py $CONF_FILE > ionograms.log 2>&1 &
+$MPIRUN --oversubscribe -np 12 python calc_ionograms.py $CONF_FILE > ionograms.log 2>&1 &
 sleep 10
 
 # plot ionograms
